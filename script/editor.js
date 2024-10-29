@@ -110,7 +110,7 @@ class BitmapEditor {
 			// loop through each column (row before transposing)
 			let byte = 0;
 			let bitPos = 0; // iterator for keeping track of the current bit to ensure precision
-			for (let x = 0; x < y.length; x++) {
+			for (let x = 0; x < column.length; x++) {
 				// x is the current element in the array, either 1 or 0.
 				if (column[x]) {
 					byte |= 1 << bitPos; // do some bitwise magic to eventually get a binary representation of the current column
@@ -118,7 +118,7 @@ class BitmapEditor {
 
 				bitPos++; // iterate current bit position
 
-				if (x % 8 === 7 || x === y.length - 1) {
+				if (x % 8 === 7 || x === column.length - 1) {
 					// Check if a byte is completed (8bits)
 					hexMap.push(`0x${byte.toString(16).padStart(2, "0")}`); // Create hexadecimal byte and add it to the output
 					// Reset for next column
