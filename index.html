@@ -5,12 +5,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bitmap Editor v0.1</title>
+  <script src="script/tt.js" defer></script>
+  <script src="script/settings.js" defer></script>
   <script src="script/editor.js" defer></script>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <div class="tools">
+    <button class="tool-btn" id="settings">[GEAR ICON]</button>
+    <button class="tool-btn" id="print">[PRINT ICON]</button>
+  </div>
   <canvas class="bitmap"></canvas>
+  <div class="settings"></div>
+  <div class="tooltip-box">
+    <pre class="text"></pre>
+  </div>
 </body>
 
 </html>

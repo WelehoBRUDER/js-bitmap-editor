@@ -1,11 +1,13 @@
 const bitmap = document.querySelector(".bitmap");
 const bitmapCtx = bitmap.getContext("2d");
+const settingsBtn = document.querySelector("#settings");
+const printBtn = document.querySelector("#print");
+tooltip.create(settingsBtn, "Settings menu");
+tooltip.create(printBtn, "Print image to console");
 
 class BitmapEditor {
 	constructor() {
 		this.map = [];
-		this.width = 10;
-		this.height = 8;
 		this.pixelScale = 24; // default scale: 1 square = 12px
 		this.zoomScale = 1;
 		this.autoZoom();
@@ -39,7 +41,7 @@ class BitmapEditor {
 	}
 
 	withinBounds(x, y) {
-		return !(x < 0 || y < 0 || x > this.width - 1 || y > this.height - 1);
+		return !(x < 0 || y < 0 || x > settings.width - 1 || y > settings.height - 1);
 	}
 
 	hold(event) {
@@ -49,13 +51,13 @@ class BitmapEditor {
 		this.paint(x, y, event);
 	}
 
-	release(event) {
+	release() {
 		this.drawing.down = false;
 	}
 
 	removeHover() {
 		const { x, y } = { ...this.prevHover };
-		if (x >= 0 && y >= 0 && x < this.width && y < this.height) {
+		if (x >= 0 && y >= 0 && x < settings.width && y < settings.height) {
 			this.drawPixel(x, y, this.map[y][x]);
 		}
 	}
@@ -78,7 +80,7 @@ class BitmapEditor {
 	}
 
 	autoZoom() {
-		const currentWidth = this.width * this.pixelScale;
+		const currentWidth = settings.width * this.pixelScale;
 		const clientWidth = window.innerWidth - 64;
 		if (currentWidth > clientWidth) {
 			this.zoomScale = clientWidth / currentWidth;
@@ -87,9 +89,9 @@ class BitmapEditor {
 
 	generateMap() {
 		const size = this.getSize();
-		bitmap.width = this.width * size;
-		bitmap.height = this.height * size;
-		this.map = new Array(this.height).fill(0).map((x) => new Array(this.width).fill(0));
+		bitmap.width = settings.width * size;
+		bitmap.height = settings.height * size;
+		this.map = new Array(settings.height).fill(0).map((x) => new Array(settings.width).fill(0));
 		for (let y = 0; y < this.map.length; y++) {
 			for (let x = 0; x < this.map[y].length; x++) {
 				const col = this.map[y][x];
@@ -148,3 +150,6 @@ const bitmapEditor = new BitmapEditor();
 bitmap.addEventListener("mousemove", (e) => bitmapEditor.hover(e));
 bitmap.addEventListener("mousedown", (e) => bitmapEditor.hold(e));
 bitmap.addEventListener("mouseup", (e) => bitmapEditor.release(e));
+
+settingsBtn.addEventListener("click", () => settings.open());
+printBtn.addEventListener("click", () => bitmapEditor.createMonovlsbHex());
