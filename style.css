@@ -1,5 +1,5 @@
 body {
-  background: silver;
+  background: rgb(60, 60, 60);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7,7 +7,35 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+}
+
+* {
   color: white;
+  font-family: Arial, Helvetica, sans-serif
+}
+
+button {
+  background: rgb(20, 20, 20);
+  border: 0.5rem solid rgb(40, 40, 40);
+  margin-right: 0.5rem;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
+}
+
+button.button-basic {
+  padding: 0.5rem;
+  font-size: 1.5rem;
+}
+
+button:hover {
+  border: 0.5rem solid silver;
+}
+
+button.tool-btn {
+  width: 5rem;
 }
 
 :root {
@@ -19,7 +47,7 @@ body {
 }
 
 .bitmap {
-  border: 4px solid rgb(80, 79, 79);
+  border: 4px solid rgb(20, 20, 20);
   margin: 0;
   padding: 0;
 }
@@ -27,9 +55,9 @@ body {
 .tooltip-box {
   position: absolute;
   z-index: 100;
-  background: gray;
+  background: rgba(0, 0, 0, 0.9);
   padding: 0.5rem;
-  border: solid 0.5rem black;
+  border: solid 0.25rem silver;
   font-size: 1.5rem;
   display: none;
 
