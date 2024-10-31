@@ -14,10 +14,25 @@ body {
   font-family: Arial, Helvetica, sans-serif
 }
 
+input[type="number"] {
+  background: rgba(0, 0, 0, 0.9);
+  border: 0.2rem solid silver;
+  width: 5rem;
+  text-align: center;
+  margin: 0.5rem;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.25);
+  margin: 1rem;
+}
+
 button {
+  transition: 100ms;
   background: rgb(20, 20, 20);
   border: 0.5rem solid rgb(40, 40, 40);
   margin-right: 0.5rem;
+  box-shadow: 0 0 1rem 0.25rem black;
   img {
     width: 100%;
     height: 100%;
@@ -32,6 +47,7 @@ button.button-basic {
 
 button:hover {
   border: 0.5rem solid silver;
+  box-shadow: 0 0 1rem 0.25rem silver;
 }
 
 button.tool-btn {
@@ -50,6 +66,7 @@ button.tool-btn {
   border: 4px solid rgb(20, 20, 20);
   margin: 0;
   padding: 0;
+  box-shadow: 0 1rem 2rem 0.25rem black;
 }
 
 .tooltip-box {
@@ -64,4 +81,14 @@ button.tool-btn {
   pre {
     margin: 0;
   }
+}
+
+.settings {
+  position: absolute;
+  background: rgb(15, 15, 15);
+  padding: 4rem;
+  border: 0.2rem solid silver;
+  box-shadow: 0 0 4rem 2rem black;
+  display: none;
+  font-size: 1.6rem;
 }

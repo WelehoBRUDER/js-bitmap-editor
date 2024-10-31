@@ -13,6 +13,7 @@ class Settings {
 	open() {
 		if (this.isOpen) return this.close();
 		settingsElem.textContent = "";
+		settingsElem.style.display = "block";
 		this.isOpen = true;
 		this.unsaved = {};
 		const options = [
@@ -24,7 +25,7 @@ class Settings {
 			},
 			{
 				id: "height",
-				name: "Image width (px)",
+				name: "Image height (px)",
 				type: "number",
 				tt: "Set height of image in pixels",
 			},
@@ -86,6 +87,7 @@ class Settings {
 		this.isOpen = false;
 		settingsElem.textContent = "";
 		tooltip.hide();
+		settingsElem.style.display = "none";
 	}
 
 	// Applies unsaved changes to the current settings object
