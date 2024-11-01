@@ -30,6 +30,13 @@ class Settings {
 				tt: "Set height of image in pixels",
 			},
 			{
+				id: "name",
+				name: "Image name",
+				type: "text",
+				tt: "Name the current image\nRecommended to use _ instead of spaces",
+				getValueFromEditor: true,
+			},
+			{
 				id: "new",
 				name: "New image",
 				type: "checkbox",
@@ -51,7 +58,11 @@ class Settings {
 
 			input.type = opt.type;
 
-			input.value = opt.default ?? this[opt.id];
+			if (opt.getValueFromEditor) {
+				input.value = bitmapEditor[opt.id];
+			} else {
+				input.value = opt.default ?? this[opt.id];
+			}
 
 			input.addEventListener("input", () => {
 				if (opt.type === "number") {

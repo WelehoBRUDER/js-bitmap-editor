@@ -3,7 +3,7 @@ const bitmapCtx = bitmap.getContext("2d");
 const settingsBtn = document.querySelector("#settings");
 const printBtn = document.querySelector("#print");
 tooltip.create(settingsBtn, "Settings menu");
-tooltip.create(printBtn, "Print image to console as python");
+tooltip.create(printBtn, "Embed to python\n----------------------\nThis will create a python code\nthat can be embedded to a program.");
 
 class BitmapEditor {
 	constructor() {
@@ -13,7 +13,11 @@ class BitmapEditor {
 		this.autoZoom();
 		this.prevHover = { x: -1, y: -1 };
 		this.drawing = { down: false, color: -1 };
-		this.name = "drawing1";
+		this.output = null;
+		this.name = null;
+		if (this.name === null) {
+			this.rename("new_image");
+		}
 
 		this.generateMap();
 	}
@@ -105,6 +109,11 @@ class BitmapEditor {
 		}
 	}
 
+	rename(name) {
+		this.name = name;
+		document.title = this.name + ".h";
+	}
+
 	// This function updates the current map to match new width and height
 	// If "new" is selected when applying settings, the map is completely wiped.
 	// Otherwise, the map gets padded on x and y coords to match.
@@ -156,13 +165,14 @@ class BitmapEditor {
 				this.generateMap(false);
 			}
 		}
+		this.rename(settings.unsaved.name);
 	}
 
 	// This function was built mainly by ChatGPT
 	// It takes a 2 dimensional array of integers (1s and 0s)
 	// and converts it to a 1 dimensional array of hexadecimals representing the bits on the image.
 	// Example output: [0xe0,0xf0,0x5b,0x0a,0xa6,0x84,0x86,0xaa,0x1b,0xf0]
-	// The output is printed to the console
+	// The output is displayed in a window in the middle of screen
 	createMonovlsbHex() {
 		const hexMap = [];
 		const map = transposeMatrix(this.map); // transpose the map (swap rows and columns) because the OLED expects width first
@@ -192,10 +202,55 @@ class BitmapEditor {
 				hexMap.push(`0x${byte.toString(16).padStart(2, "0")}`);
 			}
 		}
-		console.log(`
-		${this.name}_base = bytearray([${hexMap.toString()}])
-		${this.name} = framebuf.FrameBuffer(${this.name}_base, ${settings.width}, ${settings.height}, framebuf.MONO_VLSB)
-		`);
+		this.output = `
+		${this.name}_bitmap = bytearray([${hexMap.toString()}])
+		${this.name} = framebuf.FrameBuffer(${this.name}_bitmap, ${settings.width}, ${settings.height}, framebuf.MONO_VLSB)
+		`;
+		const preElem = document.createElement("pre");
+		preElem.innerHTML = `
+		<p>
+			<span>${
+				this.name
+			}_bitmap = </span><span style="color:slateblue">bytearray</span><span>([</span><span style="color:dodgerblue">${hexMap.toString()}</span><span>])</span><br>
+			<span>${this.name} = framebuf.</span><span style="color:orange">FrameBuffer</span><span>(${this.name}_bitmap, ${settings.width}, ${
+			settings.height
+		}, framebuf.</span><span style="color:orange">MONO_VLSB</span><span>)</span> </p>
+		`;
+		const copyButton = document.createElement("button");
+		const copyIcon = document.createElement("img");
+		copyButton.classList.add("tool-btn");
+		copyIcon.src = "../img/copy.png";
+		copyButton.append(copyIcon);
+		copyButton.addEventListener("click", () => {
+			this.copy();
+			tooltipText.textContent = "Copied to clipboard!";
+		});
+		tooltip.create(copyButton, "Copy to clipboard");
+		preElem.append(copyButton);
+		this.createWindow(preElem);
+	}
+
+	copy() {
+		navigator.clipboard.writeText(this.output);
+	}
+
+	createWindow(content, canIgnore = true) {
+		if (!content) return console.error("This window doesn't have any content! (Missing content HTMLElement from parameters)");
+		const popUpWindow = document.createElement("div");
+		const closeButton = document.createElement("div");
+		const drag = document.createElement("div");
+		popUpWindow.classList.add("pop-up-window");
+		closeButton.classList.add("close-button", canIgnore ? "." : "unavailable");
+		drag.classList.add("drag");
+		closeButton.textContent = "x";
+		closeButton.addEventListener("click", () => {
+			popUpWindow.remove();
+		});
+		content.classList.add("content");
+		popUpWindow.append(drag, closeButton, content);
+		document.body.append(popUpWindow);
+
+		dragElem(popUpWindow);
 	}
 }
 
