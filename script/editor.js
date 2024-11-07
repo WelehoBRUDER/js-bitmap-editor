@@ -2,6 +2,7 @@ const bitmap = document.querySelector(".bitmap");
 const bitmapCtx = bitmap.getContext("2d");
 const settingsBtn = document.querySelector("#settings");
 const printBtn = document.querySelector("#print");
+const info = document.querySelector(".info");
 tooltip.create(settingsBtn, "Settings menu");
 tooltip.create(printBtn, "Embed to python\n----------------------\nThis will create a python code\nthat can be embedded to a program.");
 
@@ -47,6 +48,10 @@ class BitmapEditor {
 			this.prevHover.y = y;
 			this.drawHover(x, y);
 		} else this.release();
+	}
+
+	info() {
+		info.textContent = `File: ${this.name}.h | Width: ${settings.width} | Height: ${settings.height}`;
 	}
 
 	withinBounds(x, y) {
@@ -116,6 +121,7 @@ class BitmapEditor {
 	rename(name) {
 		this.name = name;
 		document.title = this.name + ".h";
+		this.info();
 	}
 
 	// This function updates the current map to match new width and height
