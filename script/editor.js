@@ -181,8 +181,9 @@ class BitmapEditor {
 			let byte = 0;
 			let bitPos = 0; // iterator for keeping track of the current bit to ensure precision
 			for (let x = 0; x < column.length; x++) {
-				// x is the current element in the array, either 1 or 0.
-				if (column[x]) {
+				// column[x] is the current element in the array, either 1 or 0.
+				// this is reversed because the colors on the canvas don't match the intended output
+				if (!column[x]) {
 					byte |= 1 << bitPos; // do some bitwise magic to eventually get a binary representation of the current column
 				}
 
@@ -219,7 +220,7 @@ class BitmapEditor {
 		const copyButton = document.createElement("button");
 		const copyIcon = document.createElement("img");
 		copyButton.classList.add("tool-btn");
-		copyIcon.src = "../img/copy.png";
+		copyIcon.src = "./img/copy.png";
 		copyButton.append(copyIcon);
 		copyButton.addEventListener("click", () => {
 			this.copy();
