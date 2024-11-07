@@ -15,11 +15,15 @@ class BitmapEditor {
 		this.drawing = { down: false, color: -1 };
 		this.output = null;
 		this.name = null;
-		if (this.name === null) {
-			this.rename("new_image");
-		}
+		this.resetName();
 
 		this.generateMap();
+	}
+
+	resetName() {
+		if (typeof this.name !== "string") {
+			this.rename("new_image");
+		}
 	}
 
 	getSize() {
@@ -166,6 +170,7 @@ class BitmapEditor {
 			}
 		}
 		this.rename(settings.unsaved.name);
+		this.resetName();
 	}
 
 	// This function was built mainly by ChatGPT
