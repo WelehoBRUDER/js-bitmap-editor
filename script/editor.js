@@ -133,7 +133,7 @@ class BitmapEditor {
 				// Y-axis is higher than before
 				if (differenceY > 0) {
 					for (let i = 0; i < differenceY; i++) {
-						this.map.push(new Array(settings.width).fill(0));
+						this.map.push(new Array(settings.width).fill(1));
 					}
 					// Y-axis is lower than before
 				} else if (differenceY < 0) {
