@@ -5,8 +5,8 @@
 - embed to python
 - change size while keeping current image
 - fill & empty tools
+- ctrl-z functions
 
 ## Plannned features
 - save images to localStorage
-- ctr-z
 - import image from code

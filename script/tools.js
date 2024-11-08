@@ -27,13 +27,10 @@ class ToolController {
 	fill(x, y) {
 		const color = bitmapEditor.map[y][x] ? 0 : 1; // opposite of start pixel color
 		this.addToHistory({ type: "fill", hist: [] });
-		this.recursiveFill(x, y, color);
+		this.fillArea(x, y, color);
 	}
 
-	// Recursively fills all mono color space with its opposite color, stopping at hard edges.
-	// In simple terms, it's just the fill tool.
-	recursiveFill(x, y, color) {
-		// Array that stores all neighbors of the current pixel
+	fillArea(x, y, color) {
 		const points = [];
 		const checkPoints = [
 			[-1, 0], // top
@@ -41,22 +38,22 @@ class ToolController {
 			[1, 0], // bottom
 			[0, -1], // left
 		];
-		// Paint current pixel
-		bitmapEditor.paint(x, y, true, color);
-		this.history[this.history.length - 1].hist.push({ cords: [x, y], color: color });
-		// Go through each direction and find the neighbors of the current pixel
-		checkPoints.forEach(([_y, _x]) => {
-			// Check if neighboring pixel exists (is number) and if it is of the opposite color
-			if (typeof bitmapEditor.map[y + _y]?.[x + _x] === "number" && bitmapEditor.map[y + _y]?.[x + _x] !== color) {
-				// If so, store this neighbor as a pixel that needs to be checked
-				points.push([y + _y, x + _x]);
-			}
-		});
-		// Go through each neighbor that was marked
-		points.forEach(([y2, x2]) => {
-			// See recursion
-			this.recursiveFill(x2, y2, color);
-		});
+		points.push([y, x]);
+		while (points.length > 0) {
+			const [y1, x1] = points.pop();
+			// Paint current pixel
+			bitmapEditor.paint(x1, y1, true, color);
+			// Add this pixel to history for ctrl-z
+			this.history[this.history.length - 1].hist.push({ cords: [x1, y1], color: color });
+			// Go through each direction and find the neighbors of the current pixel
+			checkPoints.forEach(([_y, _x]) => {
+				// Check if neighboring pixel exists (is number) and if it is of the opposite color
+				if (typeof bitmapEditor.map[y1 + _y]?.[x1 + _x] === "number" && bitmapEditor.map[y1 + _y]?.[x1 + _x] !== color) {
+					// If so, store this neighbor as a pixel that needs to be checked
+					points.push([y1 + _y, x1 + _x]);
+				}
+			});
+		}
 	}
 
 	addToHistory(event) {

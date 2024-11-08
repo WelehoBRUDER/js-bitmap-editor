@@ -117,6 +117,7 @@ class BitmapEditor {
 
 	// Draws the entire image on the canvas at once
 	generateMap(createMap = true) {
+		toolController.history = [];
 		const size = this.getSize();
 		// Update canvas size and reset it at the same time
 		bitmap.width = settings.width * size;
@@ -150,7 +151,7 @@ class BitmapEditor {
 	update() {
 		this.autoZoom();
 		// Check if the map's size has changed
-		if (this.map.length !== settings.height || this.map[0].length !== settings.width) {
+		if (this.map.length !== settings.height || this.map[0].length !== settings.width || settings.new) {
 			if (settings.new) {
 				this.generateMap(); // just create new empty map
 			} else {
