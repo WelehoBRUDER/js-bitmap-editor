@@ -2,6 +2,8 @@ const bitmap = document.querySelector(".bitmap");
 const bitmapCtx = bitmap.getContext("2d");
 const settingsBtn = document.querySelector("#settings");
 const printBtn = document.querySelector("#print");
+const cleartBtn = document.querySelector("#empty");
+const fillBtn = document.querySelector("#fill");
 const info = document.querySelector(".info");
 tooltip.create(settingsBtn, "Settings menu");
 tooltip.create(printBtn, "Embed to python\n----------------------\nThis will create a python code\nthat can be embedded to a program.");
@@ -16,9 +18,34 @@ class BitmapEditor {
 		this.drawing = { down: false, color: -1 };
 		this.output = null;
 		this.name = null;
+		this.tools = {
+			fill: false,
+		};
 		this.resetName();
 
 		this.generateMap();
+	}
+
+	enableFill() {
+		this.tools.fill = true;
+		this.info();
+	}
+
+	disableFill() {
+		this.tools.fill = false;
+		this.info();
+	}
+
+	toggleFill() {
+		if (this.tools.fill) {
+			this.disableFill();
+		} else {
+			this.enableFill();
+		}
+	}
+
+	clear() {
+		this.generateMap(true);
 	}
 
 	resetName() {
@@ -51,7 +78,7 @@ class BitmapEditor {
 	}
 
 	info() {
-		info.textContent = `File: ${this.name}.h | Width: ${settings.width} | Height: ${settings.height}`;
+		info.textContent = `File: ${this.name}.h | Width: ${settings.width} | Height: ${settings.height} | Fill: ${this.tools.fill}`;
 	}
 
 	withinBounds(x, y) {
@@ -60,9 +87,50 @@ class BitmapEditor {
 
 	hold(event) {
 		const { x, y } = this.getMouseCords(event);
-		this.drawing.color = this.map[y][x] ? 0 : 1;
-		this.drawing.down = true;
-		this.paint(x, y, event);
+		if (!this.tools.fill) {
+			this.drawing.color = this.map[y][x] ? 0 : 1;
+			this.drawing.down = true;
+			this.paint(x, y, event);
+		} else {
+			this.fill(x, y);
+		}
+	}
+
+	fill(x, y) {
+		const color = this.map[y][x] ? 0 : 1; // opposite of start pixel color
+		this.recursiveFill(x, y, color);
+	}
+
+	// Recursively fills all mono color space with its opposite color, stopping at hard edges.
+	// In simple terms, it's just the fill tool.
+	recursiveFill(x, y, color) {
+		// Array that stores all neighbors of the current pixel
+		const points = [];
+		const checkPoints = [
+			[-1, 0], // top
+			[-1, 1], // top-right
+			[0, 1], // right
+			[1, 1], // bottom-right
+			[1, 0], // bottom
+			[1, -1], // bottom-left
+			[0, -1], // left
+			[-1, -1], // top-left
+		];
+		// Paint current pixel
+		this.paint(x, y, true, color);
+		// Go through each direction and find the neighbors of the current pixel
+		checkPoints.forEach(([_y, _x]) => {
+			// Check if neighboring pixel exists (is number) and if it is of the opposite color
+			if (typeof this.map[y + _y]?.[x + _x] === "number" && this.map[y + _y]?.[x + _x] !== color) {
+				// If so, store this neighbor as a pixel that needs to be checked
+				points.push([y + _y, x + _x]);
+			}
+		});
+		// Go through each neighbor that was marked
+		points.forEach(([y2, x2]) => {
+			// See recursion
+			this.recursiveFill(x2, y2, color);
+		});
 	}
 
 	release() {
@@ -87,9 +155,9 @@ class BitmapEditor {
 		bitmapCtx.fillRect(x * size, y * size, size, size);
 	}
 
-	paint(x, y, event) {
-		if (this.map[y][x] === this.drawing.color) return;
-		this.map[y][x] = this.drawing.color;
+	paint(x, y, auto = false, color = null) {
+		if (this.map[y][x] === this.drawing.color && !auto) return;
+		this.map[y][x] = auto ? color : this.drawing.color;
 		this.drawPixel(x, y, this.map[y][x]);
 	}
 
@@ -281,3 +349,5 @@ bitmap.addEventListener("mouseup", (e) => bitmapEditor.release(e));
 
 settingsBtn.addEventListener("click", () => settings.open());
 printBtn.addEventListener("click", () => bitmapEditor.createMonovlsbHex());
+cleartBtn.addEventListener("click", () => bitmapEditor.clear());
+fillBtn.addEventListener("click", () => bitmapEditor.toggleFill());
