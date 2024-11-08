@@ -67,7 +67,7 @@ class BitmapEditor {
 
 	hover(event) {
 		const { x, y } = this.getMouseCords(event);
-		if (this.drawing.down && this.withinBounds(x, y)) this.paint(x, y, event);
+		if (this.drawing.down && this.withinBounds(x, y)) this.paint(x, y);
 		if (this.prevHover.x === x && this.prevHover.y === y) return;
 		this.removeHover();
 		if (this.withinBounds(x, y)) {
@@ -90,7 +90,8 @@ class BitmapEditor {
 		if (!this.tools.fill) {
 			this.drawing.color = this.map[y][x] ? 0 : 1;
 			this.drawing.down = true;
-			this.paint(x, y, event);
+			console.log("what?", this.drawing.color);
+			this.paint(x, y);
 		} else {
 			this.fill(x, y);
 		}
@@ -108,13 +109,9 @@ class BitmapEditor {
 		const points = [];
 		const checkPoints = [
 			[-1, 0], // top
-			[-1, 1], // top-right
 			[0, 1], // right
-			[1, 1], // bottom-right
 			[1, 0], // bottom
-			[1, -1], // bottom-left
 			[0, -1], // left
-			[-1, -1], // top-left
 		];
 		// Paint current pixel
 		this.paint(x, y, true, color);
@@ -169,15 +166,20 @@ class BitmapEditor {
 		}
 	}
 
+	// Draws the entire image on the canvas at once
 	generateMap(createMap = true) {
 		const size = this.getSize();
+		// Update canvas size and reset it at the same time
 		bitmap.width = settings.width * size;
 		bitmap.height = settings.height * size;
+		// Reset pointer information
 		this.prevHover = { x: -1, y: -1 };
 		this.drawing = { down: false, color: -1 };
+		// Create empty map if parameters request it
 		if (createMap) {
 			this.map = new Array(settings.height).fill(1).map((x) => new Array(settings.width).fill(1));
 		}
+		// Draw each pixel from the 2 dimension matrix.
 		for (let y = 0; y < this.map.length; y++) {
 			for (let x = 0; x < this.map[y].length; x++) {
 				const col = this.map[y][x];
