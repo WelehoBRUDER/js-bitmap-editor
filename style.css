@@ -108,6 +108,7 @@ button.tool-btn {
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
   max-width: 60rem;
+  max-height: 70vh;
   background: black;
   border: 0.5rem solid silver;
   box-sizing: border-box;
@@ -117,6 +118,12 @@ button.tool-btn {
 
   img {
     max-width: 12rem;
+  }
+
+  p {
+    max-height: 80%;
+    overflow: hidden;
+    overflow-y: auto;
   }
 
   .drag {
@@ -176,5 +183,30 @@ button.tool-btn {
 
   &:hover {
     filter: brightness(1.5);
+  }
+}
+
+.map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .map-tools {
+    width: 5rem;
+    height: 20rem;
+    background: black;
+    border: 0.4rem solid rgb(20, 20, 20);
+    box-shadow: 0 0.3rem 1rem 0.4rem black;
+
+    .paint-tool {
+      width: 100%;
+      border: 0.2rem solid rgb(40, 40, 40);
+      margin: 0.3rem 0rem;
+
+      &.selected {
+        border: 0.2rem solid lightblue;
+        background: rgb(45, 45, 45);
+      }
+    }
   }
 }

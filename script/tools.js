@@ -1,27 +1,33 @@
+const pencilBtn = document.querySelector("#pencil");
+const fillBtn = document.querySelector("#fill");
+tooltip.create(pencilBtn, "Pencil tool");
+tooltip.create(fillBtn, "Paint bucket tool");
+
 class ToolController {
 	constructor() {
 		this.history = [];
 		this.tools = {
+			pencil: true,
 			fill: false,
+		};
+		this.toolButtons = {
+			pencil: pencilBtn,
+			fill: fillBtn,
 		};
 	}
 
 	enable(tool) {
+		this.removeAllSelections();
 		this.tools[tool] = true;
+		this.toolButtons[tool].classList.add("selected");
 		bitmapEditor.info();
 	}
 
-	disable(tool) {
-		this.tools[tool] = false;
-		bitmapEditor.info();
-	}
-
-	toggle(tool) {
-		if (this.tools[tool]) {
-			this.disable(tool);
-		} else {
-			this.enable(tool);
-		}
+	removeAllSelections() {
+		Object.keys(this.tools).forEach((tool) => {
+			this.tools[tool] = false;
+			this.toolButtons[tool].classList.remove("selected");
+		});
 	}
 
 	fill(x, y) {
@@ -83,3 +89,6 @@ class ToolController {
 const toolController = new ToolController();
 
 document.addEventListener("keydown", (e) => toolController.controls(e));
+
+fillBtn.addEventListener("click", () => toolController.enable("fill"));
+pencilBtn.addEventListener("click", () => toolController.enable("pencil"));

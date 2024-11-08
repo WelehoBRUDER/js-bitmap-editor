@@ -2,11 +2,11 @@ const bitmap = document.querySelector(".bitmap");
 const bitmapCtx = bitmap.getContext("2d");
 const settingsBtn = document.querySelector("#settings");
 const printBtn = document.querySelector("#print");
-const cleartBtn = document.querySelector("#empty");
-const fillBtn = document.querySelector("#fill");
+const clearBtn = document.querySelector("#empty");
 const info = document.querySelector(".info");
 tooltip.create(settingsBtn, "Settings menu");
 tooltip.create(printBtn, "Embed to python\n----------------------\nThis will create a python code\nthat can be embedded to a program.");
+tooltip.create(clearBtn, "Clear image");
 
 class BitmapEditor {
 	constructor() {
@@ -301,5 +301,4 @@ bitmap.addEventListener("mouseup", (e) => bitmapEditor.release(e));
 
 settingsBtn.addEventListener("click", () => settings.open());
 printBtn.addEventListener("click", () => bitmapEditor.createMonovlsbHex());
-cleartBtn.addEventListener("click", () => bitmapEditor.clear());
-fillBtn.addEventListener("click", () => toolController.toggle("fill"));
+clearBtn.addEventListener("click", () => bitmapEditor.clear());
