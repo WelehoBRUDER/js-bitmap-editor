@@ -1,4 +1,6 @@
 const settingsElem = document.querySelector(".settings");
+const savesBtn = document.querySelector("#saved-images");
+tooltip.create(savesBtn, "Local saved images");
 
 class Settings {
 	constructor() {
@@ -6,7 +8,17 @@ class Settings {
 		this.height = 12;
 		this.new = false;
 		this.isOpen = false;
+		this.saves = [];
 		this.unsaved = {};
+
+		this.getSaves();
+	}
+
+	getSaves() {
+		const saves = localStorage.getItem("MonoVLSB-Bitmap-Editor-Saved-Images");
+		if (saves) {
+			this.saves = JSON.parse(saves);
+		}
 	}
 
 	// Resets and opens the settings menu
@@ -111,6 +123,45 @@ class Settings {
 		bitmapEditor.update();
 		this.new = false;
 	}
+
+	getSaveIndex(name) {
+		return this.saves.findIndex((img) => img.name === name);
+	}
+
+	saveImage() {
+		const name = bitmapEditor.name;
+		const saveIndex = this.getSaveIndex(name);
+		if (saveIndex >= 0) {
+			this.saves[saveIndex] = { name: name, map: bitmapEditor.map };
+		} else {
+			this.saves.push({ name: name, map: bitmapEditor.map });
+		}
+		localStorage.setItem("MonoVLSB-Bitmap-Editor-Saved-Images", JSON.stringify(this.saves));
+	}
+
+	openSavesMenu() {
+		const savesElement = document.createElement("div");
+		savesElement.innerHTML = "<h1>Saved images</h1>";
+		this.saves.forEach((save) => {
+			const saveContainer = document.createElement("div");
+			saveContainer.textContent = `${save.name}.h | size: ${save.map[0].length}x${save.map.length}px`;
+			saveContainer.addEventListener("click", () => {
+				this.loadImage(save);
+			});
+			savesElement.append(saveContainer);
+		});
+		bitmapEditor.createWindow(savesElement);
+	}
+
+	loadImage(save) {
+		this.width = save.map[0].length;
+		this.height = save.map.length;
+		bitmapEditor.rename(save.name);
+		bitmapEditor.map = save.map;
+		bitmapEditor.generateMap(false);
+	}
 }
 
 const settings = new Settings();
+
+savesBtn.addEventListener("click", () => settings.openSavesMenu());

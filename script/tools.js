@@ -79,9 +79,20 @@ class ToolController {
 	}
 
 	controls(keyEvent) {
-		// Ctrl-Z detected!!!!!!
-		if (keyEvent.key === "z" && keyEvent.ctrlKey) {
-			this.reverseHistoryEvent();
+		if (keyEvent.ctrlKey && !keyEvent.shiftKey) {
+			keyEvent.preventDefault();
+			// Ctrl-Z detected!!!!!!
+			if (keyEvent.key === "z") {
+				this.reverseHistoryEvent();
+			}
+			// Ctrl-S spammer!!!!
+			else if (keyEvent.key === "s") {
+				if (bitmapEditor.name === "new_image") {
+					let name = prompt("Type the name of this new save file");
+					bitmapEditor.rename(name);
+				}
+				settings.saveImage();
+			}
 		}
 	}
 }

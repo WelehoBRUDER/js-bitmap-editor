@@ -115,6 +115,7 @@ button.tool-btn {
   font-size: 1.5rem;
   display: flex;
   justify-content: center;
+  padding-bottom: 3rem;
 
   img {
     max-width: 12rem;
@@ -144,6 +145,7 @@ button.tool-btn {
     padding: 1rem;
     white-space: pre-wrap;
     word-wrap: break-word;
+    top: 3rem;
     width: 80%;
 
     .buttons {
