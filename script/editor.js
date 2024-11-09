@@ -101,7 +101,7 @@ class BitmapEditor {
 	paint(x, y, auto = false, color = null) {
 		if (this.map[y][x] === this.drawing.color && !auto) return;
 		if (!auto) {
-			toolController.history[toolController.history.length - 1].hist.push({ cords: [x, y], color: this.drawing.color });
+			toolController.history[toolController.history.length - 1].hist.push({ cords: [x, y] });
 		}
 		this.map[y][x] = auto ? color : this.drawing.color;
 		this.drawPixel(x, y, this.map[y][x]);
@@ -259,30 +259,11 @@ class BitmapEditor {
 		});
 		tooltip.create(copyButton, "Copy to clipboard");
 		preElem.append(copyButton);
-		this.createWindow(preElem);
+		windowController.create(preElem, { uniqueID: "embed-to-python" });
 	}
 
 	copy() {
 		navigator.clipboard.writeText(this.output);
-	}
-
-	createWindow(content, canIgnore = true) {
-		if (!content) return console.error("This window doesn't have any content! (Missing content HTMLElement from parameters)");
-		const popUpWindow = document.createElement("div");
-		const closeButton = document.createElement("div");
-		const drag = document.createElement("div");
-		popUpWindow.classList.add("pop-up-window");
-		closeButton.classList.add("close-button", canIgnore ? "." : "unavailable");
-		drag.classList.add("drag");
-		closeButton.textContent = "x";
-		closeButton.addEventListener("click", () => {
-			popUpWindow.remove();
-		});
-		content.classList.add("content");
-		popUpWindow.append(drag, closeButton, content);
-		document.body.append(popUpWindow);
-
-		dragElem(popUpWindow);
 	}
 }
 

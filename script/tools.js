@@ -50,7 +50,7 @@ class ToolController {
 			// Paint current pixel
 			bitmapEditor.paint(x1, y1, true, color);
 			// Add this pixel to history for ctrl-z
-			this.history[this.history.length - 1].hist.push({ cords: [x1, y1], color: color });
+			this.history[this.history.length - 1].hist.push({ cords: [x1, y1] });
 			// Go through each direction and find the neighbors of the current pixel
 			checkPoints.forEach(([_y, _x]) => {
 				// Check if neighboring pixel exists (is number) and if it is of the opposite color
@@ -71,8 +71,12 @@ class ToolController {
 		let event = this.history[this.history.length - 1];
 
 		if (event.type === "fill" || event.type === "paint") {
+			// Get copy of current state of map
+			const prevMap = JSON.parse(JSON.stringify(bitmapEditor.map));
 			for (let paint of event.hist) {
-				bitmapEditor.paint(paint.cords[0], paint.cords[1], true, paint.color ? 0 : 1);
+				const [x, y] = paint.cords;
+				// Toggle color on every point in history
+				bitmapEditor.paint(x, y, true, prevMap[y][x] ? 0 : 1);
 			}
 		}
 		this.history.pop();

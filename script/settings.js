@@ -1,4 +1,3 @@
-const settingsElem = document.querySelector(".settings");
 const savesBtn = document.querySelector("#saved-images");
 tooltip.create(savesBtn, "Local saved images");
 
@@ -7,7 +6,6 @@ class Settings {
 		this.width = 16;
 		this.height = 12;
 		this.new = false;
-		this.isOpen = false;
 		this.saves = [];
 		this.unsaved = {};
 
@@ -23,10 +21,7 @@ class Settings {
 
 	// Resets and opens the settings menu
 	open() {
-		if (this.isOpen) return this.close();
-		settingsElem.textContent = "";
-		settingsElem.style.display = "block";
-		this.isOpen = true;
+		const settingsElem = document.createElement("div");
 		this.unsaved = {};
 		const options = [
 			{
@@ -96,21 +91,7 @@ class Settings {
 		});
 		tooltip.create(saveButton, "Apply current settings");
 		settingsElem.append(saveButton);
-		const cancelButton = document.createElement("button");
-		cancelButton.textContent = "Close";
-		cancelButton.classList.add("button-basic");
-		cancelButton.addEventListener("click", () => {
-			this.close();
-		});
-		tooltip.create(cancelButton, "Close settings menu");
-		settingsElem.append(cancelButton);
-	}
-
-	close() {
-		this.isOpen = false;
-		settingsElem.textContent = "";
-		tooltip.hide();
-		settingsElem.style.display = "none";
+		windowController.create(settingsElem, { uniqueID: "settings-window" });
 	}
 
 	// Applies unsaved changes to the current settings object
@@ -119,7 +100,7 @@ class Settings {
 		Object.entries(this.unsaved).forEach(([key, value]) => {
 			this[key] = value;
 		});
-		this.close();
+		windowController.close("settings-window");
 		bitmapEditor.update();
 		this.new = false;
 	}
@@ -142,15 +123,28 @@ class Settings {
 	openSavesMenu() {
 		const savesElement = document.createElement("div");
 		savesElement.innerHTML = "<h1>Saved images</h1>";
+		savesElement.classList.add("saved-images");
+		const wrapper = document.createElement("div");
+		wrapper.classList.add("save-wrapper");
 		this.saves.forEach((save) => {
 			const saveContainer = document.createElement("div");
+			saveContainer.classList.add("save-container");
 			saveContainer.textContent = `${save.name}.h | size: ${save.map[0].length}x${save.map.length}px`;
-			saveContainer.addEventListener("click", () => {
-				this.loadImage(save);
+			const deleteButton = document.createElement("button");
+			deleteButton.textContent = "X";
+			deleteButton.addEventListener("click", () => {
+				console.log("willDelete");
 			});
-			savesElement.append(saveContainer);
+			saveContainer.addEventListener("click", () => {
+				if (confirm(`Load image ${save.name}?`)) {
+					this.loadImage(save);
+				}
+			});
+			saveContainer.append(deleteButton);
+			wrapper.append(saveContainer);
 		});
-		bitmapEditor.createWindow(savesElement);
+		savesElement.append(wrapper);
+		windowController.create(savesElement, { uniqueID: "save-window" });
 	}
 
 	loadImage(save) {
@@ -159,6 +153,7 @@ class Settings {
 		bitmapEditor.rename(save.name);
 		bitmapEditor.map = save.map;
 		bitmapEditor.generateMap(false);
+		windowController.close("save-window");
 	}
 }
 

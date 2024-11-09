@@ -6,7 +6,7 @@
 - change size while keeping current image
 - fill & empty tools
 - ctrl-z functions
+- save images to localStorage
 
 ## Plannned features
-- save images to localStorage
 - import image from code

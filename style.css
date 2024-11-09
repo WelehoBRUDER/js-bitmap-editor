@@ -90,16 +90,7 @@ button.tool-btn {
   font-size: 1.5rem;
   background: rgba(0, 0, 0, 0.35);
   padding: 0.4rem;
-}
-
-.settings {
-  position: absolute;
-  background: black;
-  padding: 4rem;
-  border: 0.2rem solid silver;
-  box-shadow: 0 0 4rem 2rem black;
-  display: none;
-  font-size: 1.6rem;
+  margin-left: 3rem;
 }
 
 .pop-up-window {
@@ -209,6 +200,32 @@ button.tool-btn {
         border: 0.2rem solid lightblue;
         background: rgb(45, 45, 45);
       }
+    }
+  }
+}
+
+.saved-images {
+  min-width: 40rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  h1 {
+    white-space: nowrap;
+    background: rgb(10, 10, 10, 0.5);
+    padding: 1rem;
+  }
+  .save-container {
+    display: flex;
+    white-space: nowrap;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    background: rgb(10, 10, 10, 0.8);
+    user-select: none;
+
+    &:hover {
+      background: rgb(60, 60, 60, 0.8);
     }
   }
 }
