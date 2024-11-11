@@ -100,6 +100,8 @@ button.tool-btn {
   transform: translateX(-50%) translateY(-50%);
   max-width: 60rem;
   max-height: 70vh;
+  min-width: 138px;
+  min-height: 108px;
   background: black;
   border: 0.5rem solid silver;
   box-sizing: border-box;

@@ -319,3 +319,5 @@ previewBtn.addEventListener("click", () => bitmapEditor.preview());
 settingsBtn.addEventListener("click", () => settings.open());
 printBtn.addEventListener("click", () => bitmapEditor.createMonovlsbHex());
 clearBtn.addEventListener("click", () => bitmapEditor.clear());
+
+previewBtn.click();

@@ -1,6 +1,48 @@
 class WindowController {
 	constructor() {
 		this.holding = false;
+		this.resizing = {
+			currently: false,
+			dir: "",
+			window: null,
+			callback: null,
+		};
+		this.prev = {
+			x: 0,
+			y: 0,
+		};
+
+		document.addEventListener("mouseup", (e) => {
+			if (this.resizing.currently) {
+				document.body.style.cursor = "default";
+				if (this.resizing.callback) {
+					this.resizing.callback();
+				}
+			}
+			this.holding = false;
+			this.resizing = { currently: false, dir: "", window: null, callback: null };
+		});
+		document.addEventListener("mousemove", (e) => {
+			const { offsetX: x, offsetY: y } = e;
+			if (this.resizing.currently) {
+				const cursors = {
+					e: "ew-resize",
+					w: " ew-resize",
+				};
+				const dir = this.resizing.dir;
+				const elem = this.resizing.window;
+				document.body.style.cursor = `${cursors[dir]}`;
+				if (dir === "e" || dir === "w") {
+					const diff = dir === "e" ? x - this.prev.x : this.prev.x - x;
+					elem.style.width = `${elem.offsetWidth + diff}px`;
+				} else if (dir === "n" || dir === "s") {
+					const diff = dir === "n" ? this.prev.y - y : y - this.prev.y;
+					elem.style.height = `${elem.offsetHeight + diff}px`;
+				}
+			}
+
+			this.prev = { x, y };
+		});
 	}
 	/**
 	 *
@@ -34,53 +76,55 @@ class WindowController {
 		popUpWindow.append(drag, closeButton, content);
 		document.body.append(popUpWindow);
 		if (options?.resize) {
-			popUpWindow.addEventListener("mousedown", (e) => {
+			popUpWindow.addEventListener("mousedown", () => {
 				this.holding = true;
 			});
-			popUpWindow.addEventListener("mouseup", (e) => {
-				this.holding = false;
-			});
 			popUpWindow.addEventListener("mousemove", (e) => {
-				popUpWindow.style.cursor = "default";
+				if (!this.resizing.currently) {
+					popUpWindow.style.cursor = "default";
+				}
 				const { offsetX: x, offsetY: y } = e;
-				// south-west
+				// north-west
 				if (x <= 0 && y >= -4 && y <= 0) {
 					popUpWindow.style.cursor = "nwse-resize";
-					console.log("north-west");
+					if (this.holding) this.resizing = { currently: true, dir: "nw", window: popUpWindow, callback: options?.onResize };
 				}
 				// south-west
 				else if (x <= 0 && y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
 					popUpWindow.style.cursor = "nesw-resize";
-					console.log("south-west");
-				} else if (x >= popUpWindow.offsetWidth - 10 && y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
+					this.resizing = { currently: true, dir: "sw", window: popUpWindow, callback: options?.onResize };
+				}
+				// south-east
+				else if (x >= popUpWindow.offsetWidth - 10 && y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
 					popUpWindow.style.cursor = "nwse-resize";
-					console.log("south-east");
+					if (this.holding) this.resizing = { currently: true, dir: "se", window: popUpWindow, callback: options?.onResize };
 				}
 				// north-east
 				else if (x >= popUpWindow.offsetWidth - 10 && y >= -4 && y <= 0) {
 					popUpWindow.style.cursor = "nesw-resize";
-					console.log("north-east");
-				} else if (x <= 0 && x >= -4) {
-					popUpWindow.style.cursor = "ew-resize";
-					console.log("left");
+					if (this.holding) this.resizing = { currently: true, dir: "ne", window: popUpWindow, callback: options?.onResize };
 				}
-				// right resize
+				// west resize
+				else if (x <= 0 && x >= -4) {
+					popUpWindow.style.cursor = "ew-resize";
+					if (this.holding) this.resizing = { currently: true, dir: "w", window: popUpWindow, callback: options?.onResize };
+				}
+				// east resize
 				else if (x >= popUpWindow.offsetWidth - 10 && x <= popUpWindow.offsetWidth + 4) {
 					popUpWindow.style.cursor = "ew-resize";
-					console.log("right");
+					if (this.holding) this.resizing = { currently: true, dir: "e", window: popUpWindow, callback: options?.onResize };
 				}
-				// top resize
+				// north resize
 				else if (y <= 0 && y >= -4) {
 					popUpWindow.style.cursor = "ns-resize";
-					console.log("top");
+					if (this.holding) this.resizing = { currently: true, dir: "n", window: popUpWindow, callback: options?.onResize };
 				}
-				// bottom resize
+				// south resize
 				else if (y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
 					popUpWindow.style.cursor = "ns-resize";
-					console.log("bottom");
+					this.resizing = { currently: true, dir: "s", window: popUpWindow, callback: options?.onResize };
 				}
 			});
-			console.log(options);
 		}
 
 		dragElem(popUpWindow);
