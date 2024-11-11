@@ -284,20 +284,21 @@ class BitmapEditor {
 		previewCanvas.style.transform = "translate(-50%, -50%)";
 		previewCanvas.style.position = "absolute";
 		const ctx = previewCanvas.getContext("2d");
-		drawPreview(this);
+		drawPreview();
 
-		function drawPreview(_this) {
+		function drawPreview() {
 			previewCanvas.width = previewCanvas.width;
-			for (let y = 0; y < _this.map.length; y++) {
-				for (let x = 0; x < _this.map[y].length; x++) {
-					const color = _this.map[y][x] ? "rgb(0, 0, 0)" : "rgb(0,206,209)";
-					ctx.fillStyle = color;
-					ctx.fillRect(x, y, 1, 1);
+			for (let y = 0; y < bitmapEditor.map.length; y++) {
+				for (let x = 0; x < bitmapEditor.map[y].length; x++) {
+					if (!bitmapEditor.map[y][x]) {
+						ctx.fillStyle = "rgb(0, 209, 209)";
+						ctx.fillRect(x, y, 1, 1);
+					}
 				}
 			}
 		}
 		previewElem.append(previewCanvas);
-		windowController.create(previewElem, { uniqueID: "preview-window" });
+		windowController.create(previewElem, { uniqueID: "preview-window", resize: true, onResize: drawPreview });
 	}
 }
 

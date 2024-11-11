@@ -1,4 +1,7 @@
 class WindowController {
+	constructor() {
+		this.holding = false;
+	}
 	/**
 	 *
 	 * @param {HTMLElement} content - HTML element housing all displayable content on the window
@@ -30,6 +33,55 @@ class WindowController {
 		content.classList.add("content");
 		popUpWindow.append(drag, closeButton, content);
 		document.body.append(popUpWindow);
+		if (options?.resize) {
+			popUpWindow.addEventListener("mousedown", (e) => {
+				this.holding = true;
+			});
+			popUpWindow.addEventListener("mouseup", (e) => {
+				this.holding = false;
+			});
+			popUpWindow.addEventListener("mousemove", (e) => {
+				popUpWindow.style.cursor = "default";
+				const { offsetX: x, offsetY: y } = e;
+				// south-west
+				if (x <= 0 && y >= -4 && y <= 0) {
+					popUpWindow.style.cursor = "nwse-resize";
+					console.log("north-west");
+				}
+				// south-west
+				else if (x <= 0 && y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
+					popUpWindow.style.cursor = "nesw-resize";
+					console.log("south-west");
+				} else if (x >= popUpWindow.offsetWidth - 10 && y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
+					popUpWindow.style.cursor = "nwse-resize";
+					console.log("south-east");
+				}
+				// north-east
+				else if (x >= popUpWindow.offsetWidth - 10 && y >= -4 && y <= 0) {
+					popUpWindow.style.cursor = "nesw-resize";
+					console.log("north-east");
+				} else if (x <= 0 && x >= -4) {
+					popUpWindow.style.cursor = "ew-resize";
+					console.log("left");
+				}
+				// right resize
+				else if (x >= popUpWindow.offsetWidth - 10 && x <= popUpWindow.offsetWidth + 4) {
+					popUpWindow.style.cursor = "ew-resize";
+					console.log("right");
+				}
+				// top resize
+				else if (y <= 0 && y >= -4) {
+					popUpWindow.style.cursor = "ns-resize";
+					console.log("top");
+				}
+				// bottom resize
+				else if (y >= popUpWindow.offsetHeight - 10 && y <= popUpWindow.offsetHeight + 4) {
+					popUpWindow.style.cursor = "ns-resize";
+					console.log("bottom");
+				}
+			});
+			console.log(options);
+		}
 
 		dragElem(popUpWindow);
 	}
