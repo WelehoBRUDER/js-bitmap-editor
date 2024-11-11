@@ -1,9 +1,11 @@
 const bitmap = document.querySelector(".bitmap");
 const bitmapCtx = bitmap.getContext("2d");
+const previewBtn = document.querySelector("#preview");
 const settingsBtn = document.querySelector("#settings");
 const printBtn = document.querySelector("#print");
 const clearBtn = document.querySelector("#empty");
 const info = document.querySelector(".info");
+tooltip.create(previewBtn, "View preview");
 tooltip.create(settingsBtn, "Settings menu");
 tooltip.create(printBtn, "Embed to python\n----------------------\nThis will create a python code\nthat can be embedded to a program.");
 tooltip.create(clearBtn, "Clear image");
@@ -13,6 +15,7 @@ class BitmapEditor {
 		this.map = [];
 		this.pixelScale = 24; // default scale: 1 square = 12px
 		this.zoomScale = 1;
+		this.previewScale = 1;
 		this.autoZoom();
 		this.prevHover = { x: -1, y: -1 };
 		this.drawing = { down: false, color: -1 };
@@ -265,6 +268,37 @@ class BitmapEditor {
 	copy() {
 		navigator.clipboard.writeText(this.output);
 	}
+
+	preview() {
+		const previewElem = document.createElement("div");
+		/* Set content div to same size as the OLED screen */
+		previewElem.style.width = "128px";
+		previewElem.style.height = "64px";
+		previewElem.style.background = "black";
+		const previewCanvas = document.createElement("canvas");
+		/* Place the canvas in the center of the content div */
+		previewCanvas.width = settings.width;
+		previewCanvas.height = settings.height;
+		previewCanvas.style.left = "64px";
+		previewCanvas.style.top = "32px";
+		previewCanvas.style.transform = "translate(-50%, -50%)";
+		previewCanvas.style.position = "absolute";
+		const ctx = previewCanvas.getContext("2d");
+		drawPreview(this);
+
+		function drawPreview(_this) {
+			previewCanvas.width = previewCanvas.width;
+			for (let y = 0; y < _this.map.length; y++) {
+				for (let x = 0; x < _this.map[y].length; x++) {
+					const color = _this.map[y][x] ? "rgb(0, 0, 0)" : "rgb(0,206,209)";
+					ctx.fillStyle = color;
+					ctx.fillRect(x, y, 1, 1);
+				}
+			}
+		}
+		previewElem.append(previewCanvas);
+		windowController.create(previewElem, { uniqueID: "preview-window" });
+	}
 }
 
 // straight from the gpt
@@ -280,6 +314,7 @@ bitmap.addEventListener("mousemove", (e) => bitmapEditor.hover(e));
 bitmap.addEventListener("mousedown", (e) => bitmapEditor.hold(e));
 bitmap.addEventListener("mouseup", (e) => bitmapEditor.release(e));
 
+previewBtn.addEventListener("click", () => bitmapEditor.preview());
 settingsBtn.addEventListener("click", () => settings.open());
 printBtn.addEventListener("click", () => bitmapEditor.createMonovlsbHex());
 clearBtn.addEventListener("click", () => bitmapEditor.clear());

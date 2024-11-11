@@ -5,6 +5,8 @@ class WindowController {
 	 * @param {*} options - Possible options:
 	 *  - `canIgnore` {boolean} - If enabled, this option makes the default close button unusable.
 	 *  - `uniqueID` {string} - A unique ID for the window; only one instance can exist at any one time.
+	 * 	-	`resize` {boolean} - If enabled, this option makes the window resizable
+	 * 	- `onResize` {callback} - Callback function for the resize event
 	 * @returns {void}
 	 */
 	create(content, options) {
