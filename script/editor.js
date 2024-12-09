@@ -253,8 +253,9 @@ class BitmapEditor {
 				let byte = 0;
 				for (let row = 0; row < 8; row++) {
 					const pixelRow = page * 8 + row; // Correct row across multiple pages
-					if (pixelRow >= settings.height) continue; // Don't read beyond image height
-					const bitIndex = pixelRow * settings.width + col; // 2D to 1D index
+					if (pixelRow >= settings.height) break; // Don't read beyond image height
+					const bitIndex = pixelRow * settings.width + col; // Correct 2D to 1D conversion
+					console.log(`bitIndex=${bitIndex}, pixelRow=${pixelRow}, col=${col}, width=${settings.width}`);
 					if (binaryData[bitIndex]) {
 						byte |= 1 << row; // Set bit at correct position (0 = LSB, 7 = MSB)
 					}
